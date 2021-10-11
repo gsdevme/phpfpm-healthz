@@ -1,0 +1,30 @@
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+    - go test ./...
+project_name: phpfpm-healthz
+builds:
+  - main: ./cmd/phpfpm_healthz
+    id: "phpfpm-healthz"
+    binary: phpfpm-healthz
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      amd64: x86_64
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
