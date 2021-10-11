@@ -2,21 +2,37 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"github.com/caddyserver/caddy/v2/modules/caddyhttp/reverseproxy/fastcgi"
+	"github.com/spf13/cobra"
 	"os"
 	"time"
 )
 
-func main() {
-	fileName := flag.String("file", "/app/public/index.php", "The full or relative path for the fastcgi to the file")
-	requestUri := flag.String("requestUri", "/healthz", "The Uri to the health endpoint")
+// createCommand creates the Cobra command with flags
+func createCommand() cobra.Command {
+	c := cobra.Command{
+		Use: "php-fpm healthz fastcgi checker",
+		Run: doRequest,
+	}
+
+	c.Flags().String("file", "/app/public/index.php", "The path to the script filename")
+	c.Flags().String("uri", "/healthz", "The Request URI that you want to hit")
+
+	return c
+}
+
+// doRequest creats a connection to the fastcgi and looks for a 2xx response
+func doRequest(cmd *cobra.Command, args []string) {
+	filename := cmd.Flag("file").Value.String()
+	requestUri := cmd.Flag("uri").Value.String()
 
 	env := make(map[string]string)
-	env["SCRIPT_FILENAME"] = *fileName
-	env["REQUEST_URI"] = *requestUri
+	env["SCRIPT_FILENAME"] = filename
+	env["REQUEST_URI"] = requestUri
 	env["REMOTE_ADDR"] = "127.0.0.1"
+
+	fmt.Println(fmt.Sprintf("Endpoint %s%s", filename, requestUri))
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 
@@ -41,4 +57,13 @@ func main() {
 	}
 
 	fmt.Println(fmt.Sprintf("Success, status code: %d", resp.StatusCode))
+}
+
+func main() {
+	c := createCommand()
+
+	if err := c.Execute(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }

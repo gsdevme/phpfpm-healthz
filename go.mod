@@ -2,7 +2,10 @@ module github.com/gsdevme/phpfpm-healthz
 
 go 1.17
 
-require github.com/caddyserver/caddy/v2 v2.4.5
+require (
+	github.com/caddyserver/caddy/v2 v2.4.5
+	github.com/spf13/cobra v1.1.3
+)
 
 require (
 	github.com/AndreasBriese/bbloom v0.0.0-20190825152654-46b345b51c96 // indirect
@@ -36,6 +39,7 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/huandu/xstrings v1.3.1 // indirect
 	github.com/imdario/mergo v0.3.11 // indirect
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/juju/ansiterm v0.0.0-20180109212912-720a0952cc2a // indirect
 	github.com/klauspost/compress v1.13.4 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
@@ -74,6 +78,7 @@ require (
 	github.com/smallstep/nosql v0.3.8 // indirect
 	github.com/smallstep/truststore v0.9.6 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stoewer/go-strcase v1.2.0 // indirect
 	github.com/urfave/cli v1.22.5 // indirect
 	github.com/yuin/goldmark v1.4.0 // indirect
