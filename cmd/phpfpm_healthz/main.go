@@ -32,7 +32,7 @@ func doRequest(cmd *cobra.Command, args []string) {
 	env["REQUEST_URI"] = requestUri
 	env["REMOTE_ADDR"] = "127.0.0.1"
 
-	fmt.Println(fmt.Sprintf("Endpoint %s%s", filename, requestUri))
+	fmt.Printf("Endpoint %s%s\n", filename, requestUri)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 
@@ -40,7 +40,15 @@ func doRequest(cmd *cobra.Command, args []string) {
 
 	c, err := fastcgi.DialContext(ctx, "tcp", "127.0.0.1:9000")
 
+	if err != nil {
+		fmt.Println(err.Error())
+
+		os.Exit(1)
+	}
+
 	defer c.Close()
+
+	resp, err := c.Head(env)
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -48,15 +56,13 @@ func doRequest(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	resp, err := c.Head(env)
-
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		fmt.Println(fmt.Sprintf("Non zero status code returned %d", resp.StatusCode))
+		fmt.Printf("Non zero status code returned %d\n", resp.StatusCode)
 
 		os.Exit(1)
 	}
 
-	fmt.Println(fmt.Sprintf("Success, status code: %d", resp.StatusCode))
+	fmt.Printf("Success, status code: %d\n", resp.StatusCode)
 }
 
 func main() {
